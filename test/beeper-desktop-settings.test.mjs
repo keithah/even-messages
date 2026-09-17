@@ -112,3 +112,68 @@ test("Beeper setup guidance points to Integrations and uses sanitized screenshot
     "the obsolete token guide GIF should be removed",
   );
 });
+
+test("Beeper screenshot modal manages keyboard focus", () => {
+  const onboarding = readRepositoryFile("src/components/DevModeUI.tsx");
+
+  assert.match(
+    onboarding,
+    /const tokenGuideTriggerRef = useRef<HTMLButtonElement \| null>\(null\);/,
+    "opening a guide image must remember the invoking card",
+  );
+  assert.match(
+    onboarding,
+    /const tokenGuideCloseButtonRef = useRef<HTMLButtonElement \| null>\(null\);/,
+    "the modal must have a focus target",
+  );
+  assert.match(
+    onboarding,
+    /tokenGuideCloseButtonRef\.current\?\.focus\(\);/,
+    "opening the modal must move focus to its close control",
+  );
+  assert.match(
+    onboarding,
+    /event\.key === "Tab"[\s\S]*?event\.preventDefault\(\)[\s\S]*?tokenGuideCloseButtonRef\.current\?\.focus\(\);/,
+    "Tab must remain inside the modal",
+  );
+  assert.match(
+    onboarding,
+    /const tokenGuideShouldRestoreFocusRef = useRef\(false\);/,
+    "closing state must defer focus restoration until after the dialog unmounts",
+  );
+  assert.match(
+    onboarding,
+    /tokenGuideShouldRestoreFocusRef\.current = true;/,
+    "closing the modal must request focus restoration",
+  );
+  assert.match(
+    onboarding,
+    /if \(tokenGuideShouldRestoreFocusRef\.current\) \{[\s\S]*?tokenGuideTriggerRef\.current\?\.focus\(\);[\s\S]*?tokenGuideShouldRestoreFocusRef\.current = false;/,
+    "the post-render focus effect must restore the invoking card exactly once",
+  );
+  assert.match(
+    onboarding,
+    /import \{ createPortal \} from "react-dom";/,
+    "the modal must render outside the inert app root",
+  );
+  assert.match(
+    onboarding,
+    /const appRoot = document\.getElementById\("root"\);/,
+    "the modal focus effect must target the app root",
+  );
+  assert.match(
+    onboarding,
+    /appRoot\?\.setAttribute\("inert", ""\);/,
+    "opening the modal must inert background controls",
+  );
+  assert.match(
+    onboarding,
+    /return \(\) => appRoot\?\.removeAttribute\("inert"\);/,
+    "closing or unmounting the modal must restore background controls",
+  );
+  assert.match(
+    onboarding,
+    /\{selectedTokenGuideImage &&\s*createPortal\([\s\S]*?document\.body,/,
+    "the modal must be portaled outside the app root",
+  );
+});

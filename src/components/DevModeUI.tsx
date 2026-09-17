@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   BeeperAccount,
   BeeperChat,
@@ -706,6 +707,9 @@ function SettingsForm({
   const [selectedTokenGuideImage, setSelectedTokenGuideImage] = useState<
     (typeof TOKEN_GUIDE_IMAGES)[number] | null
   >(null);
+  const tokenGuideTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const tokenGuideCloseButtonRef = useRef<HTMLButtonElement | null>(null);
+  const tokenGuideShouldRestoreFocusRef = useRef(false);
   const [isFindingComputer, setIsFindingComputer] = useState(false);
   const [wasComputerFound, setWasComputerFound] = useState(false);
   const [discoveryProgress, setDiscoveryProgress] =
@@ -754,17 +758,47 @@ function SettingsForm({
     discoveryError,
   );
 
+  const openTokenGuide = (
+    guide: (typeof TOKEN_GUIDE_IMAGES)[number],
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    tokenGuideTriggerRef.current = event.currentTarget;
+    setSelectedTokenGuideImage(guide);
+  };
+
+  const closeTokenGuide = () => {
+    tokenGuideShouldRestoreFocusRef.current = true;
+    setSelectedTokenGuideImage(null);
+  };
+
+  const handleTokenGuideKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeTokenGuide();
+      return;
+    }
+
+    if (event.key === "Tab") {
+      event.preventDefault();
+      tokenGuideCloseButtonRef.current?.focus();
+    }
+  };
+
   useEffect(() => {
-    if (!selectedTokenGuideImage) return;
+    const appRoot = document.getElementById("root");
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setSelectedTokenGuideImage(null);
-      }
-    };
+    if (selectedTokenGuideImage) {
+      appRoot?.setAttribute("inert", "");
+      tokenGuideCloseButtonRef.current?.focus();
+      return () => appRoot?.removeAttribute("inert");
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    if (tokenGuideShouldRestoreFocusRef.current) {
+      tokenGuideTriggerRef.current?.focus();
+      tokenGuideShouldRestoreFocusRef.current = false;
+    }
   }, [selectedTokenGuideImage]);
 
   return (
@@ -900,7 +934,7 @@ function SettingsForm({
                 type="button"
                 className={styles.tokenGuideMedia}
                 key={guide.src}
-                onClick={() => setSelectedTokenGuideImage(guide)}
+                onClick={(event) => openTokenGuide(guide, event)}
                 aria-label={`Open step ${index + 1} larger: ${guide.caption}`}
               >
                 <img src={guide.src} alt={guide.alt} />
@@ -1027,24 +1061,25 @@ function SettingsForm({
         </section>
       )}
     </form>
-    {selectedTokenGuideImage && (
+    {selectedTokenGuideImage && createPortal(
       <div
         className={styles.tokenGuideOverlay}
         role="dialog"
         aria-modal="true"
         aria-label={`Beeper token guide: ${selectedTokenGuideImage.caption}`}
+        onKeyDown={handleTokenGuideKeyDown}
       >
-        <button
-          type="button"
+        <div
           className={styles.tokenGuideBackdrop}
-          aria-label="Close token guide"
-          onClick={() => setSelectedTokenGuideImage(null)}
+          aria-hidden="true"
+          onClick={closeTokenGuide}
         />
         <div className={styles.tokenGuideDialog}>
           <button
             type="button"
+            ref={tokenGuideCloseButtonRef}
             className={styles.tokenGuideClose}
-            onClick={() => setSelectedTokenGuideImage(null)}
+            onClick={closeTokenGuide}
             aria-label="Close token guide"
           >
             ×
@@ -1054,7 +1089,8 @@ function SettingsForm({
             alt={selectedTokenGuideImage.alt}
           />
         </div>
-      </div>
+      </div>,
+      document.body,
     )}
     </>
   );
