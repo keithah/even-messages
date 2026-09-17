@@ -71,7 +71,7 @@ npm run dev
   <img src="./public/beeper-desktop-setup/03-create-access-token.png" alt="Beeper Desktop dialog with a callout that Allow sensitive actions can send messages and modify your account; enable it only for replies" width="700">
 </p>
 
-> **Support note:** Please do not ask the Beeper Developer Community for help using Even Messages. It is for people building integrations, not end-user support. For help with Even Messages, [open a project issue](https://github.com/thibautrey/even-messages/issues).
+> **Support note:** Please do not ask the Beeper Developer Community for help using Even Messages. It is for people building integrations, not end-user support.
 
 #### Connect Even Messages
 

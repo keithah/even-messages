@@ -41,6 +41,9 @@ const guideImages = [
 const currentSetupRoute = "Settings → Integrations";
 const supportNote =
   "Please do not ask the Beeper Developer Community for help using Even Messages";
+const removedSupportCallToAction = "For help with Even Messages";
+const removedProjectIssueUrl =
+  "https://github.com/thibautrey/even-messages/issues";
 const sensitiveActionsScope = "send messages and modify your account";
 const legacyPhrases = [
   "Developer Mode",
@@ -65,6 +68,16 @@ test("Beeper setup guidance points to Integrations and uses sanitized screenshot
   for (const content of [onboarding, readme, tailscaleGuide]) {
     assert.match(normalizeWhitespace(content), new RegExp(supportNote));
     assert.match(normalizeWhitespace(content), new RegExp(sensitiveActionsScope));
+    assert.equal(
+      content.includes(removedSupportCallToAction),
+      false,
+      "the removed project-issue call to action must not return",
+    );
+    assert.equal(
+      content.includes(removedProjectIssueUrl),
+      false,
+      "the removed project-issue link must not return",
+    );
   }
 
   for (const phrase of [

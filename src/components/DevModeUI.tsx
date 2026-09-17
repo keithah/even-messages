@@ -970,16 +970,7 @@ function SettingsForm({
           <p className={styles.supportNote}>
             <strong>Support note:</strong> Please do not ask the Beeper Developer
             Community for help using Even Messages. It is for people building
-            integrations, not end-user support. For help with Even Messages,{" "}
-            <a
-              href="https://github.com/thibautrey/even-messages/issues"
-              target="_blank"
-              rel="noreferrer"
-              className={styles.helpLink}
-            >
-              open a project issue
-            </a>
-            .
+            integrations, not end-user support.
           </p>
 
           <div className={styles.formGroup}>

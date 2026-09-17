@@ -173,7 +173,7 @@ On your home computer:
 
 If you already use Even Messages at home, you may already have this token.
 
-> **Support note:** Please do not ask the Beeper Developer Community for help using Even Messages. It is for people building integrations, not end-user support. For help with Even Messages, [open a project issue](https://github.com/thibautrey/even-messages/issues).
+> **Support note:** Please do not ask the Beeper Developer Community for help using Even Messages. It is for people building integrations, not end-user support.
 
 Keep Beeper Desktop running.
 
