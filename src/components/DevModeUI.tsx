@@ -28,8 +28,8 @@ const TOKEN_GUIDE_IMAGES = [
   },
   {
     src: "/beeper-desktop-setup/03-create-access-token.png",
-    alt: "Beeper Desktop dialog with an annotation to enable Allow sensitive actions before creating a token",
-    caption: "Before creating the token, turn on Allow sensitive actions to send replies.",
+    alt: "Beeper Desktop dialog with an annotation that Allow sensitive actions can send messages and modify your account; enable it only for replies",
+    caption: "Allow sensitive actions lets the token send messages and modify your account. Enable it only for replies.",
   },
 ] as const;
 
@@ -926,8 +926,9 @@ function SettingsForm({
                 <strong>Create a new token for Beeper Desktop API</strong>.
               </li>
               <li>
-                Enable <strong>Allow sensitive actions</strong> so Even Messages
-                can send replies, then create the token and paste it below.
+                <strong>Allow sensitive actions</strong> lets the token send messages
+                and modify your account. Enable it only if you want Even Messages to
+                send replies, then create the token and paste it below.
               </li>
             </ol>
           </div>

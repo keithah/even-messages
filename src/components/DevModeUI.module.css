@@ -750,9 +750,6 @@ body {
 
 /* Footer */
 .footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
   flex-shrink: 0;
   min-width: 0;
   padding: 1rem 2rem;

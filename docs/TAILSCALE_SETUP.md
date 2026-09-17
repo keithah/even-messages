@@ -169,7 +169,7 @@ On your home computer:
 3. Open **Settings → Integrations**
 4. Under **Beeper Desktop API**, turn on **Allow connections**
 5. Under **Approved connections**, select the plus button to **Create a new token for Beeper Desktop API**
-6. Enable **Allow sensitive actions** if you want Even Messages to send replies, then copy the token
+6. **Allow sensitive actions** lets the token send messages and modify your account. Enable it only if you want Even Messages to send replies, then copy the token
 
 If you already use Even Messages at home, you may already have this token.
 
