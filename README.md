@@ -46,17 +46,40 @@ cd even-messages
 # Install dependencies
 npm install
 
-# Start development server
+# Run the app locally
 npm run dev
 ```
 
 ### Configuration
 
-1. Open the app at `http://localhost:5173`
-2. Click **Settings** in the top-right corner
+#### Set up Beeper Desktop
+
+1. In Beeper Desktop, open **Settings → Integrations**.
+2. Under **Beeper Desktop API**, turn on **Allow connections**.
+3. Under **Approved connections**, select the plus button to **Create a new token for Beeper Desktop API**.
+4. Enable **Allow sensitive actions** so Even Messages can send replies, then create and copy the token.
+
+<p align="center">
+  <img src="./public/beeper-desktop-setup/01-integrations.png" alt="Beeper Desktop Integrations settings with Allow connections enabled" width="700">
+</p>
+
+<p align="center">
+  <img src="./public/beeper-desktop-setup/02-approved-connections.png" alt="Beeper Desktop Approved connections with the add button" width="700">
+</p>
+
+<p align="center">
+  <img src="./public/beeper-desktop-setup/03-create-access-token.png" alt="Beeper Desktop dialog with a callout to enable Allow sensitive actions before creating a token" width="700">
+</p>
+
+> **Support note:** Please do not ask the Beeper Developer Community for help using Even Messages. It is for people building integrations, not end-user support. For help with Even Messages, [open a project issue](https://github.com/thibautrey/even-messages/issues).
+
+#### Connect Even Messages
+
+1. Open the app at `http://localhost:5173`.
+2. Click **Settings** in the top-right corner.
 3. Enter your Beeper Desktop API credentials:
    - **Base URL**: `http://localhost:23373`
-   - **Token**: Your Beeper API token (found in Beeper settings)
+   - **Token**: The access token you created above
 
 ---
 

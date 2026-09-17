@@ -15,7 +15,23 @@ import styles from "./DevModeUI.module.css";
 
 const TAILSCALE_SETUP_URL =
   "https://github.com/thibautrey/even-messages/blob/main/docs/TAILSCALE_SETUP.md";
-const TOKEN_GUIDE_GIF_URL = "/beeper-token-guide.gif";
+const TOKEN_GUIDE_IMAGES = [
+  {
+    src: "/beeper-desktop-setup/01-integrations.png",
+    alt: "Beeper Desktop Settings Integrations page with Allow connections enabled",
+    caption: "Enable Allow connections in Settings → Integrations.",
+  },
+  {
+    src: "/beeper-desktop-setup/02-approved-connections.png",
+    alt: "Beeper Desktop Approved connections section with the add button",
+    caption: "Add an approved connection.",
+  },
+  {
+    src: "/beeper-desktop-setup/03-create-access-token.png",
+    alt: "Beeper Desktop dialog with an annotation to enable Allow sensitive actions before creating a token",
+    caption: "Before creating the token, turn on Allow sensitive actions to send replies.",
+  },
+] as const;
 
 function getHostnameFromBaseUrl(baseUrl?: string | null): string | null {
   if (!baseUrl) return null;
@@ -616,7 +632,7 @@ export function DevModeUI({
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerTopRow}>
-          <p>Even Messages - Development Mode</p>
+          <p>Even Messages</p>
           <button className={styles.settingsButton} onClick={onOpenSettings}>
             Settings
           </button>
@@ -687,7 +703,9 @@ function SettingsForm({
   );
   const [token, setToken] = useState(savedConfig?.token || "");
   const [showToken, setShowToken] = useState(false);
-  const [showTokenGuide, setShowTokenGuide] = useState(false);
+  const [selectedTokenGuideImage, setSelectedTokenGuideImage] = useState<
+    (typeof TOKEN_GUIDE_IMAGES)[number] | null
+  >(null);
   const [isFindingComputer, setIsFindingComputer] = useState(false);
   const [wasComputerFound, setWasComputerFound] = useState(false);
   const [discoveryProgress, setDiscoveryProgress] =
@@ -712,7 +730,7 @@ function SettingsForm({
       } else {
         setWasComputerFound(false);
         setDiscoveryError(
-          "Could not find Beeper Desktop. Make sure it is open and Developer Mode is running.",
+          "Could not find Beeper Desktop. Make sure it is open and Allow connections is enabled in Settings → Integrations.",
         );
       }
     } catch (err) {
@@ -737,17 +755,17 @@ function SettingsForm({
   );
 
   useEffect(() => {
-    if (!showTokenGuide) return;
+    if (!selectedTokenGuideImage) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setShowTokenGuide(false);
+        setSelectedTokenGuideImage(null);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [showTokenGuide]);
+  }, [selectedTokenGuideImage]);
 
   return (
     <>
@@ -772,8 +790,9 @@ function SettingsForm({
           <h3>Is Beeper installed and running?</h3>
           <p>
             Open Beeper Desktop on the computer that has access to your
-            messages. In Beeper, open Developer Mode and start the Development
-            Server.
+            messages. In Beeper, open <strong>Settings → Integrations</strong>{" "}
+            and turn on <strong>Allow connections</strong> under{" "}
+            <strong>Beeper Desktop API</strong>.
           </p>
           <p>
             If you do not have Beeper yet, download it from{" "}
@@ -804,8 +823,8 @@ function SettingsForm({
         <section className={styles.setupStepPanel}>
           <h3>Find the computer</h3>
           <p>
-            Even Messages will scan your local network for the Beeper Desktop
-            development server and fill in the computer address automatically.
+            Even Messages will scan your local network for the Beeper Desktop API
+            and fill in the computer address automatically.
           </p>
 
           <div className={styles.formGroup}>
@@ -872,27 +891,61 @@ function SettingsForm({
             replies through Beeper Desktop.
           </p>
 
-          <button
-            type="button"
-            className={styles.tokenGuideMedia}
-            onClick={() => setShowTokenGuide(true)}
-            aria-label="Open token guide larger"
+          <div
+            className={styles.tokenGuideGallery}
+            aria-label="Beeper Desktop token setup screenshots"
           >
-            <img
-              src={TOKEN_GUIDE_GIF_URL}
-              alt="How to create a Beeper Desktop API token"
-            />
-            <span className={styles.tokenGuideExpandHint}>Tap to expand</span>
-          </button>
+            {TOKEN_GUIDE_IMAGES.map((guide, index) => (
+              <button
+                type="button"
+                className={styles.tokenGuideMedia}
+                key={guide.src}
+                onClick={() => setSelectedTokenGuideImage(guide)}
+                aria-label={`Open step ${index + 1} larger: ${guide.caption}`}
+              >
+                <img src={guide.src} alt={guide.alt} />
+                <span className={styles.tokenGuideExpandHint}>
+                  Step {index + 1}: Tap to expand
+                </span>
+              </button>
+            ))}
+          </div>
 
           <div className={styles.instructions}>
             <ol>
-              <li>Open Beeper Desktop settings.</li>
-              <li>Go to Developer Mode.</li>
-              <li>Start the Development Server.</li>
-              <li>Create a token and paste it below.</li>
+              <li>
+                In Beeper Desktop, open <strong>Settings → Integrations</strong>.
+              </li>
+              <li>
+                Under <strong>Beeper Desktop API</strong>, turn on{" "}
+                <strong>Allow connections</strong>.
+              </li>
+              <li>
+                Under <strong>Approved connections</strong>, select the plus
+                button to{" "}
+                <strong>Create a new token for Beeper Desktop API</strong>.
+              </li>
+              <li>
+                Enable <strong>Allow sensitive actions</strong> so Even Messages
+                can send replies, then create the token and paste it below.
+              </li>
             </ol>
           </div>
+
+          <p className={styles.supportNote}>
+            <strong>Support note:</strong> Please do not ask the Beeper Developer
+            Community for help using Even Messages. It is for people building
+            integrations, not end-user support. For help with Even Messages,{" "}
+            <a
+              href="https://github.com/thibautrey/even-messages/issues"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.helpLink}
+            >
+              open a project issue
+            </a>
+            .
+          </p>
 
           <div className={styles.formGroup}>
             <label htmlFor="token">API Token</label>
@@ -973,31 +1026,31 @@ function SettingsForm({
         </section>
       )}
     </form>
-    {showTokenGuide && (
+    {selectedTokenGuideImage && (
       <div
         className={styles.tokenGuideOverlay}
         role="dialog"
         aria-modal="true"
-        aria-label="Beeper token guide"
+        aria-label={`Beeper token guide: ${selectedTokenGuideImage.caption}`}
       >
         <button
           type="button"
           className={styles.tokenGuideBackdrop}
           aria-label="Close token guide"
-          onClick={() => setShowTokenGuide(false)}
+          onClick={() => setSelectedTokenGuideImage(null)}
         />
         <div className={styles.tokenGuideDialog}>
           <button
             type="button"
             className={styles.tokenGuideClose}
-            onClick={() => setShowTokenGuide(false)}
+            onClick={() => setSelectedTokenGuideImage(null)}
             aria-label="Close token guide"
           >
             ×
           </button>
           <img
-            src={TOKEN_GUIDE_GIF_URL}
-            alt="How to create a Beeper Desktop API token"
+            src={selectedTokenGuideImage.src}
+            alt={selectedTokenGuideImage.alt}
           />
         </div>
       </div>
@@ -1042,7 +1095,7 @@ function BeeperSettingsPane({
       } else {
         setWasComputerFound(false);
         setDiscoveryError(
-          "Could not find Beeper Desktop. Make sure it is open and Developer Mode is running.",
+          "Could not find Beeper Desktop. Make sure it is open and Allow connections is enabled in Settings → Integrations.",
         );
       }
     } catch (err) {
@@ -1128,7 +1181,7 @@ function BeeperSettingsPane({
           </button>
         </div>
         <span className={styles.hint}>
-          Paste your API token from Beeper's Developer Mode
+          Paste an access token created in Beeper Desktop Settings → Integrations.
         </span>
       </div>
 
